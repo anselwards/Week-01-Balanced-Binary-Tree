@@ -1,0 +1,112 @@
+//二维树状数组
+//hash[x][y]表示(x,y)处是否有点
+#include <stdio.h>
+#include <string.h>
+#include <iostream>
+#include <algorithm>
+#include <vector>
+#include <queue>
+#include <set>
+#include <map>
+#include <string>
+#include <math.h>
+#include <stdlib.h>
+using namespace std;
+
+#define lson rt << 1, l, m
+#define rson rt << 1 | 1, m + 1, r
+
+using namespace std;
+
+const int INF = 0x7FFFFFFF;
+const double EPS = 1e-10;
+const double PI = 2 * acos (0.0);
+const int MOD = 7;
+const int maxn = 1600;
+
+int ans[maxn][maxn];
+bool hash[maxn][maxn];
+
+int lowbit (int val)
+{
+    return val & (-val);
+}
+
+
+void UpDate (int x, int y, int val)
+{
+    while (x <= maxn)
+    {
+        int temp = y;
+        while (temp <= maxn)
+        {
+            ans[x][temp] += val;
+            temp += lowbit (temp);
+        }
+        x += lowbit (x);
+    }
+}
+
+int Query (int x, int y)
+{
+    int sum = 0;
+    while (x > 0)
+    {
+        int temp = y;
+        while (temp > 0)
+        {
+            sum += ans[x][temp];
+            temp -= lowbit (temp);
+        }
+        x -= lowbit (x);
+    }
+
+return sum;
+}
+
+
+int main()
+{
+    int t, flag = 1;
+    scanf ("%d", &t);
+
+    while (t--)
+    {
+        printf ("Case %d:\n", flag++);
+
+        memset (ans, 0, sizeof (ans));
+        memset (hash, false, sizeof (hash));
+
+        int q;
+        scanf ("%d", &q);
+
+        int i, cmd;
+        for (i = 0; i < q; i++)
+        {
+            scanf ("%d", &cmd);
+            if (cmd == 0)
+            {
+                int x, y;
+                scanf ("%d%d", &x, &y);
+                x++, y++;
+                if (!hash[x][y])
+                {
+                    UpDate (x, y, 1);
+                    hash[x][y] = true;
+                }
+            }
+
+            else
+            {
+                int x1, x2, y1, y2;
+                scanf ("%d%d%d%d", &x1, &y1, &x2, &y2);
+                x1++, x2++, y1++, y2++;
+                printf ("%d\n", Query (x2, y2) + Query (x1 - 1, y1 - 1) - Query (x1 - 1, y2)
+                        - Query (x2, y1 - 1));
+
+            }
+        }
+    }
+
+return 0;
+}
